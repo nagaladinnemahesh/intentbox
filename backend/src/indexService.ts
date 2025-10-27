@@ -1,4 +1,3 @@
-import { emitWarning } from "process";
 import elasticClient from "./elasticSearchClient.js";
 
 const INDEX_NAME = "emails";
@@ -39,7 +38,7 @@ export const searchEmails = async(query: string) => {
         query:{
             multi_match:{
                 query,
-                fields: ["from", "to", "subject", "snippet", "body"]
+                fields: ["from", "to", "subject", "snippet"] //excluded body for now
             }
         }
     })

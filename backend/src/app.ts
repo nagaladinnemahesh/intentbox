@@ -1,15 +1,23 @@
 import express from 'express'
-import bodyParser from 'body-parser'
-import { listEmails } from './gmailService.js'
+import emailRoutes from './routes/emailRoutes.js'
+import dotenv from 'dotenv'
+import cors from 'cors'
+
+dotenv.config()
+
 
 const app = express()
-app.use(bodyParser.json())
+const PORT = process.env.PORT || 5000
 
-app.get('/emails', async(req,res) => {
-    const emails = await listEmails();
-    res.json(emails);
+app.use(cors());
+app.use(express.json())
+
+app.use('/api', emailRoutes)
+
+app.get('/', (req, res) => {
+    res.send('IntentBox Backend is running')
 })
 
-const PORT = process.env.PORT || 5000
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
