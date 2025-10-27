@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --loader ts-node/esm src/app.ts"
+    "dev": "node --import tsx src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,11 +17,15 @@
     "@types/node": "^24.9.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.19.1",
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.12.2",
     "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "googleapis": "^164.1.0",

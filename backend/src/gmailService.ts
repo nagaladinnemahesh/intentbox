@@ -1,6 +1,9 @@
 import { google } from "googleapis";
 import oAuth2Client from "./googleClient.js";
 import { htmlToText } from "html-to-text";
+import {createIndexIfNotExists, indexEmail} from "./indexService.js";
+import elasticClient from "./elasticSearchClient.js";
+import {analyzeEmailByAI} from './geminiService.js'
 
 const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
@@ -22,11 +25,14 @@ function decodeBase64(data: string): string {
   return buff.toString("utf-8");
 }
 
-export async function listEmails() {
+export async function listAndIndexEmails() {
   try {
+    // first checking if index exists, if not creating one
+    await createIndexIfNotExists();
+
     const res = await gmail.users.messages.list({
       userId: "me",
-      maxResults: 10,
+      maxResults: 2,
       labelIds: ["INBOX"],
     });
 
@@ -47,8 +53,10 @@ export async function listEmails() {
       const subject = getHeader(headers, "Subject");
       const from = getHeader(headers, "From");
       const to = getHeader(headers, "To");
-      const date = getHeader(headers, "Date");
+      const dateRaw = getHeader(headers, "Date");
       const snippet = email.data.snippet;
+
+      const date = new Date(dateRaw).toISOString();
 
       // extracting body from email
 
@@ -68,20 +76,39 @@ export async function listEmails() {
         body = htmlToText(html, { wordwrap: 130 });
       }
 
-      formattedEmails.push({
+      // Analyzing email using Gemini AI
+      const aiAnalysis = await analyzeEmailByAI({subject, body})
+
+      const formattedEmail = {
         id: msg.id,
         from,
         to,
         subject,
         date,
         snippet,
-        body,
-      });
+        aiAnalysis,
+        // body, excluding body to avoid html content in output
+      };
+
+      formattedEmails.push(formattedEmail);
+      await indexEmail(formattedEmail);
     }
 
+    // force refresh to make sure data is searchable immediately
+
+    await import('./elasticSearchClient.js').then(({default: elasticClient}) => 
+      elasticClient.indices.refresh({index: 'emails'}));
+
+    
+    console.log(`Indexed ${formattedEmails.length} emails.`);
     return formattedEmails;
   } catch (error) {
     console.error("Error fetching emails:", error);
     return [];
   }
 }
+
+
+
+// to delete old index
+// Invoke-RestMethod -Uri "http://localhost:9200/emails" -Method Delete
