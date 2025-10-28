@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --import tsx src/app.ts"
+    "dev": "node --import tsx src/app.ts",
+    "reset-index": "node --loader ts-node/esm scripts/resetIndex.ts"
   },
   "keywords": [],
   "author": "",
