@@ -1,6 +1,6 @@
 import express from "express";
-import { listAndIndexEmails } from "../gmailService.js";
-import { searchEmails } from "../indexService.js";
+import { listAndIndexEmails } from "../services/gmailService.js";
+import { searchEmails } from "../services/indexService.js";
 
 const router = express.Router();
 

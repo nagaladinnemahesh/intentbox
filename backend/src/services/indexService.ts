@@ -1,6 +1,6 @@
 import elasticClient from "./elasticSearchClient.js";
 import { listAndIndexEmails } from "./gmailService.js";
-import { generateEmbedding } from "./services/embeddingService.js";
+import { generateEmbedding } from "./embeddingService.js";
 
 const INDEX_NAME = "emails";
 
