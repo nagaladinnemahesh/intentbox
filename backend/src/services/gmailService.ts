@@ -2,9 +2,9 @@ import { google } from "googleapis";
 import oAuth2Client from "./googleClient.js";
 import { htmlToText } from "html-to-text";
 import { createIndexIfNotExists, indexEmail } from "./indexService.js";
-import elasticClient from "./elasticSearchClient.js";
+import elasticClient from "../services/elasticSearchClient.js";
 import { analyzeEmailByAI } from "./geminiService.js";
-import { batch } from "googleapis/build/src/apis/batch/index.js";
+// import { batch } from "googleapis/build/src/apis/batch/index.js";
 
 const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
@@ -40,7 +40,7 @@ export async function listAndIndexEmails() {
 
     const res = await gmail.users.messages.list({
       userId: "me",
-      maxResults: 7,
+      maxResults: 2,
       labelIds: ["INBOX"],
     });
 

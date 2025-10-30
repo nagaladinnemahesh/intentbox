@@ -8,7 +8,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 export async function analyzeEmailByAI(email: {subject: string, body: string}){
     const prompt = `
     You are an intelligent email analyzer. Categorize this email
-    based on it's content.
+    based on it's content. Just do categorize and no other explanations. Just answer.
     Email Subject: ${email.subject}
     Email Body: ${email.body}
     Classify into these fields:
