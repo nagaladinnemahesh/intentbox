@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import type { IUser } from "../models/User.js";
+import type { AuthRequest } from "../middleware/authMiddleware.js"; // ✅ add this import
 
 interface RegisterBody {
   name: string;
@@ -16,7 +17,11 @@ interface LoginBody {
   password: string;
 }
 
-export const registerUser = async (req: Request<{}, {}, RegisterBody>, res: Response): Promise<void> => {
+//  Register User
+export const registerUser = async (
+  req: Request<{}, {}, RegisterBody>,
+  res: Response
+): Promise<void> => {
   try {
     const { name, email, password } = req.body;
 
@@ -35,7 +40,11 @@ export const registerUser = async (req: Request<{}, {}, RegisterBody>, res: Resp
   }
 };
 
-export const loginUser = async (req: Request<{}, {}, LoginBody>, res: Response): Promise<void> => {
+//  Login User
+export const loginUser = async (
+  req: Request<{}, {}, LoginBody>,
+  res: Response
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -60,6 +69,24 @@ export const loginUser = async (req: Request<{}, {}, LoginBody>, res: Response):
     res.json({
       token,
       user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//  Get Authenticated User Info
+export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = await User.findById(req.user?.id);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.json({
+      email: user.email,
+      gmailConnected: user.gmailConnected ?? false, //  default to false if undefined
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });

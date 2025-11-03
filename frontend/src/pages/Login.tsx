@@ -1,7 +1,9 @@
-import { useState } from "react";
+import {useState } from "react";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,7 +14,7 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
-      window.location.href = "/"; // go to dashboard
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Login failed");
     }
@@ -54,13 +56,12 @@ export default function Login() {
         >
           Login
         </button>
-
         <p className="mt-3 text-center text-sm">
           Don’t have an account?{" "}
           <a href="/register" className="text-blue-500 hover:underline">
             Register
           </a>
-        </p>
+      </p>
       </form>
     </div>
   );
