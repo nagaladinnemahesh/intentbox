@@ -32,3 +32,5 @@ Thumbs.db
 # Docker volumes (Elasticsearch data, etc.)
 es_data/
 docker-data/
+
+.vite/
