@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function GoogleLoginButton() {
   const handleGoogleConnect = () => {
     window.location.href = "http://localhost:5000/api/auth/google";

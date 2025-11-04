@@ -1,4 +1,4 @@
-import elasticClient from "../src/services/elasticSearchClient.js";
+import elasticClient from "../services/elasticSearchClient.js";
 
 const INDEX_NAME = "emails";
 
