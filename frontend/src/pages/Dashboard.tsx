@@ -77,6 +77,57 @@ export default function Dashboard() {
     }
   };
 
+  // demo mode emails 
+
+  const demoEmails: Email[] = [
+    {
+      id: "1",
+      from: "recruiter@company.com",
+      to: "you@gmail.com",
+      subject: "Interview Invitation – Backend Engineer",
+      snippet:
+        "We reviewed your profile and would like to schedule a technical interview this week.",
+      aiAnalysis: {
+        Importance: "High",
+        Intent: "Job Opportunity",
+        shortSummary: "Schedule a backend interview",
+      },
+      score: 0.95,
+    },
+    {
+      id: "2",
+      from: "noreply@linkedin.com",
+      to: "you@gmail.com",
+      subject: "Your post is getting attention!",
+      snippet: "50+ new people engaged with your recent post.",
+      aiAnalysis: {
+        Importance: "Medium",
+        Intent: "Engagement Notification",
+        shortSummary: "Post gaining engagement on LinkedIn",
+      },
+      score: 0.75,
+    },
+    {
+      id: "3",
+      from: "amazon.in",
+      to: "you@gmail.com",
+      subject: "Your order has been shipped",
+      snippet: "Your recent order #12345 has been shipped and will arrive soon.",
+      aiAnalysis: {
+        Importance: "Low",
+        Intent: "Order Update",
+        shortSummary: "Amazon shipment notification",
+      },
+      score: 0.6,
+    },
+  ];
+
+  const activateDemoMode = () => {
+    localStorage.setItem("token", "demo-token");
+    setGmailConnected(true);
+    setEmails(demoEmails);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/login";
@@ -125,6 +176,10 @@ export default function Dashboard() {
             Connect your Gmail account to start analyzing your emails with AI.
           </p>
           <GoogleLoginButton />
+          <button onClick={activateDemoMode}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+            Try Demo Mode 🚀
+          </button>
         </div>
       ) : (
         <>

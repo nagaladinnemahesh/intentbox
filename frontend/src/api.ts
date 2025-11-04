@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api',  // backend url
+    baseURL: 'https://intentbox.onrender.com',  // backend url
 })
 
 api.interceptors.request.use((config) => {
