@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [gmailConnected, setGmailConnected] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userLoaded, setUserLoaded] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
   const location = useLocation();
 
   // Capture token from Google OAuth redirect
@@ -37,7 +38,6 @@ export default function Dashboard() {
 
     if (token) {
       localStorage.setItem("token", token);
-      // clean the URL so ?token=... disappears
       window.history.replaceState({}, document.title, "/dashboard");
     }
   }, [location]);
@@ -47,6 +47,15 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
+
+      if (token === "demo-token") {
+        setDemoMode(true);
+        setGmailConnected(true);
+        setUserEmail("demo@intentbox.ai");
+        setEmails(demoEmails);
+        setUserLoaded(true);
+        return;
+      }
 
       const { data } = await api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
@@ -60,9 +69,9 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch emails if Gmail connected
+  // Fetch emails if Gmail connected and not demo mode
   const fetchEmails = async (query?: string) => {
-    if (!gmailConnected) return;
+    if (!gmailConnected || demoMode) return;
     setLoading(true);
     try {
       const endpoint = query ? `/search?q=${query}` : "/emails";
@@ -77,8 +86,7 @@ export default function Dashboard() {
     }
   };
 
-  // demo mode emails 
-
+  // Demo emails data
   const demoEmails: Email[] = [
     {
       id: "1",
@@ -124,8 +132,11 @@ export default function Dashboard() {
 
   const activateDemoMode = () => {
     localStorage.setItem("token", "demo-token");
+    setDemoMode(true);
     setGmailConnected(true);
+    setUserEmail("demo@intentbox.ai");
     setEmails(demoEmails);
+    alert("🚀 Demo Mode Activated!");
   };
 
   const handleLogout = () => {
@@ -138,7 +149,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (gmailConnected) fetchEmails();
+    if (gmailConnected && !demoMode) fetchEmails();
   }, [gmailConnected]);
 
   // Conditional rendering
@@ -171,19 +182,20 @@ export default function Dashboard() {
       </div>
 
       {!gmailConnected ? (
-        <div className="flex flex-col items-center justify-center mt-10">
-          <p className="mb-4 text-gray-600 text-center">
-            Connect your Gmail account to start analyzing your emails with AI.
+        <div className="flex flex-col items-center justify-center mt-10 space-y-4">
+          <p className="text-gray-600 text-center">
+            Connect your Gmail to start analyzing your emails with AI — or try demo mode.
           </p>
           <GoogleLoginButton />
-          <button onClick={activateDemoMode}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+          <button
+            onClick={activateDemoMode}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+          >
             Try Demo Mode 🚀
           </button>
         </div>
       ) : (
         <>
-          {/* Search Bar */}
           <SearchBar onSearch={fetchEmails} />
 
           {loading ? (
@@ -204,9 +216,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500 mt-8">
-              No emails found.
-            </p>
+            <p className="text-center text-gray-500 mt-8">No emails found.</p>
           )}
         </>
       )}
