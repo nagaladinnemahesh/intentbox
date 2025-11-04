@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import authRoutes from './routes/authRoutes.js'
 import mongoose from 'mongoose'
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config()
 
@@ -17,6 +19,16 @@ app.use(express.json())
 app.use('/api', emailRoutes)
 app.use('/api/auth', authRoutes)
 
+// For serving React build files in production
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
+app.get("*", (_, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
+
 mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => console.log("MongoDB connected"))
@@ -28,3 +40,4 @@ app.get('/', (req, res) => {
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
