@@ -70,7 +70,10 @@ export const googleCallback = async (req: Request, res: Response) => {
     );
 
     // Redirect to frontend
-    res.redirect(`http://localhost:5173/dashboard?token=${userJWTtoken}`);
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    res.redirect(`${FRONTEND_URL}/dashboard?token=${userJWTtoken}`);
+
+    // res.redirect(`http://localhost:5173/dashboard?token=${userJWTtoken}`);
   } catch (error) {
     console.error("❌ Error during Google OAuth callback:", error);
     res.status(500).json({ error: "Internal Server Error" });
