@@ -16,8 +16,8 @@ const PORT = process.env.PORT || 5000
 app.use(cors());
 app.use(express.json())
 
-app.use('/api', emailRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api', emailRoutes)
 
 // For serving React build files in production
 const __filename = fileURLToPath(import.meta.url);
@@ -25,8 +25,8 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist", "index.html"));
+app.get("*",(req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
 });
 
 
@@ -35,9 +35,9 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
-app.get('/', (req, res) => {
-    res.send('IntentBox Backend is running')
-})
+// app.get('/', (req, res) => {
+//     res.send('IntentBox Backend is running')
+// })
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
