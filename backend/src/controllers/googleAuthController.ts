@@ -71,6 +71,9 @@ export const googleCallback = async (req: Request, res: Response) => {
 
     // Redirect to frontend
     const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    console.log("GOOGLE CALLBACK → REDIRECTING TO:", `${FRONTEND_URL}/dashboard?token=${userJWTtoken}`);
+    console.log("GOOGLE CALLBACK → FRONTEND_URL:", process.env.FRONTEND_URL);
+
     res.redirect(`${FRONTEND_URL}/dashboard?token=${userJWTtoken}`);
 
     // res.redirect(`http://localhost:5173/dashboard?token=${userJWTtoken}`);
